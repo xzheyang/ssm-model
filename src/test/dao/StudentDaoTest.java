@@ -1,10 +1,11 @@
 package dao;
 
+import base.BaseTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import pojo.impl.Student;
+import pojo.Student;
 
-public class StudentDaoTest {
+public class StudentDaoTest extends BaseTest {
 
     @Autowired
     private StudentDao StudentDao;
@@ -13,9 +14,10 @@ public class StudentDaoTest {
     public void testStudentDao(){
 
 
-        Student s = StudentDao.search("hy");
+        Student s = StudentDao.search(1);
 
-        System.out.println("password:-->"+s.getPassword());
+        System.out.println("username:"+s.getUsername());
+        System.out.println("password:"+s.getPassword());
 
     }
 

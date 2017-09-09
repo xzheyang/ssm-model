@@ -1,8 +1,8 @@
-package pojo.impl;
+package pojo;
 
-import pojo.User;
 
-public class Student implements User {
+
+public class Student {
 
     private int id;
     private String username;

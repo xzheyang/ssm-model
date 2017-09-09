@@ -1,9 +1,8 @@
 package dao;
 
-import pojo.impl.Student;
+import pojo.Student;
+
 
 public interface StudentDao {
-        Student search(String username);
-
-
+        Student search(int id);
 }
