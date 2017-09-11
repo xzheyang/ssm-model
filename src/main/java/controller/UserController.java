@@ -1,6 +1,7 @@
 package controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import pojo.Student;
@@ -12,7 +13,7 @@ import javax.annotation.Resource;
 public class UserController {
 
     @Resource(name = "StudentServiceImpl")
-    StudentService service;
+    private StudentService service;
 
     @RequestMapping(value = "/loginUser",method = RequestMethod.POST)
     public String loginUser(Student student){
@@ -23,5 +24,15 @@ public class UserController {
 
         return "forward:login_user.jsp";
     }
+
+
+    @RequestMapping(value = "/{path:\\w+}")
+    public String all(@PathVariable("path") String path){
+
+        return path;
+    }
+
+
+
 
 }

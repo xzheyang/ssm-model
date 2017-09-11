@@ -10,7 +10,7 @@
 ">
 
     <!--扫描bean -->
-<context:component-scan base-package="service,controller,dao" ></context:component-scan>
+<context:component-scan base-package="service,controller,dao,shiro" ></context:component-scan>
     <!-- 加载properties -->
 <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
 

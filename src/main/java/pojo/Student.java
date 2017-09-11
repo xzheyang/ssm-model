@@ -7,6 +7,15 @@ public class Student {
     private int id;
     private String username;
     private String password;
+    private String roleId;
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
+    }
 
     public int getId() {
         return id;

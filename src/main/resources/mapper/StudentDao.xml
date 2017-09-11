@@ -9,10 +9,20 @@
         <id property="id" column="id"></id>
         <result property="username" column="username" ></result>
         <result property="password" column="password" ></result>
+        <result property="roleId" column="roleid" ></result>
     </resultMap>
 
     <select id="search" resultMap="StudentMap">
-        SELECT * FROM student WHERE id = #{id}
+        SELECT * FROM student WHERE username = #{username}
+    </select>
+    
+    <select id="getRoles" parameterType="String" resultType="String">
+ select r.rolename from student s,role r where s.roleid=r.id and s.username=#{username}
+    </select>
+
+    <select id="getPermissions" parameterType="String" resultType="String">
+        select p.permissionname from student s,role r,permission p
+        where s.roleid=r.id and p.roleid=r.id and s.userName=#{username}
     </select>
 
 
