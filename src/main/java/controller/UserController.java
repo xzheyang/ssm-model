@@ -1,5 +1,9 @@
 package controller;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +12,7 @@ import pojo.Student;
 import service.StudentService;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class UserController {
@@ -16,13 +21,25 @@ public class UserController {
     private StudentService service;
 
     @RequestMapping(value = "/loginUser",method = RequestMethod.POST)
-    public String loginUser(Student student){
+    public String loginUser(Student student, HttpServletRequest request){
 
-        boolean result = service.loginUser(student);
 
-        if(result==true){return "success";}
+        if(student==null){return "forward:login_user.jsp";}
 
-        return "forward:login_user.jsp";
+        Subject subject = SecurityUtils.getSubject() ;
+        UsernamePasswordToken token = new UsernamePasswordToken(student.getUsername(),student.getPassword()) ;
+
+
+        try {
+            subject.login(token);
+        }catch (AuthenticationException e){
+            return "forward:login_user.jsp";
+        }
+
+
+        return "success";
+
+
     }
 
 

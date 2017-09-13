@@ -1,8 +1,11 @@
 package pojo;
 
 
+import java.io.Serializable;
 
-public class Student {
+public class Student implements Serializable {
+
+    //private static final long serialVersionUID = 7247714666080613254L;
 
     private int id;
     private String username;

@@ -1,6 +1,7 @@
 package shiro.realm;
 
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -40,13 +41,19 @@ public class StudentRealm extends AuthorizingRealm {
         if (student != null){
             //将查询到的用户账号和密码存放到 authenticationInfo用于后面的权限判断。第三个参数随便放一个就行了。
             AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(student.getUsername(),student.getPassword(),
-                    "a") ;
+                    this.getName()) ;
             return authenticationInfo ;
         }else{
             return  null ;
         }
 
+
     }
 
+    //清除缓存,更新权限
+    public void clearCached(){
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        super.clearCache(principals);
+    }
 
 }

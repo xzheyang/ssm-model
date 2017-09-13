@@ -15,9 +15,8 @@
 <h3>学生登录</h3>
 
 <form action="loginUser" method="post">
-    <input type="hidden" name="id" value="1"><br>
     un:<input type="text" name="username"><br>
-    ps:<input type="password" name="password"><br>
+    ps:<input type="password" name="password"><input type="checkbox" name="rememberMe">记住密码<br>
     <input type="submit" value="提交">
 </form>
 
