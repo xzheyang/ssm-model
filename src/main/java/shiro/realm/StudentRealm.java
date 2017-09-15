@@ -11,12 +11,15 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import dao.StudentDao;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import pojo.Student;
 
 import javax.annotation.Resource;
 import java.util.Set;
 
 
+@Component
 public class StudentRealm extends AuthorizingRealm {
 
     @Resource

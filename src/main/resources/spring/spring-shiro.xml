@@ -5,6 +5,7 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd
 
 ">
+    <!--配置,出现问题,不能注册shiro相关bean -->
 
     <!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
@@ -12,6 +13,8 @@
         <property name="globalSessionTimeout" value="50000"/>
          <!--删除失效的session-->
         <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionListeners" ref="SessionListener" />
+        <property name="sessionDAO" ref="SessionDao" />
     </bean>
 
     <!-- 缓存管理器 -->
@@ -20,7 +23,16 @@
 
     </bean>
 
+    <!-- SessionDao -->
+    <bean name="SessionDao" class="shiro.session.SessionDao">
+        <property name="activeSessionsCacheName" value="activeSessionCache"/>
+        <property name="cacheManager" ref="cacheManager"></property>
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    <!-- 会话ID生成器  -->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
 
+    <bean name="SessionListener" class="shiro.session.SessionListener"></bean>
 
     <!-- rememberMeCookie
     <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
@@ -56,6 +68,7 @@
     *****************基本功能与支持******************************
 
     -->
+
 
     <!-- 配置自定义Realm -->
     <bean id="StudentRealm" class="shiro.realm.StudentRealm"/>
