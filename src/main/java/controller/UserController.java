@@ -20,6 +20,11 @@ public class UserController {
     @Resource(name = "StudentServiceImpl")
     private StudentService service;
 
+    @RequestMapping(value = "/loginUser", method = RequestMethod.GET)
+    public String loginPage() {
+        return "redirect:/login_user.jsp";
+    }
+
     @RequestMapping(value = "/loginUser",method = RequestMethod.POST)
     public String loginUser(Student student, HttpServletRequest request){
 
@@ -43,13 +48,30 @@ public class UserController {
     }
 
 
+    /*
     @RequestMapping(value = "/{path:\\w+}")
     public String all(@PathVariable("path") String path){
 
         return path;
+    }*/
+
+    @RequestMapping(value = "/student")
+    public String test1(){
+
+        return "student";
     }
 
+    @RequestMapping(value = "/super")
+    public String test2(){
 
+        return "super";
+    }
+
+    @RequestMapping(value = "/teacher")
+    public String test3(){
+
+        return "teacher";
+    }
 
 
 }

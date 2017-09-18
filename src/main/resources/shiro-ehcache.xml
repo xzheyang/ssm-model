@@ -44,8 +44,8 @@
            maxElementsInMemory="2000"
            eternal="false"
            overflowToDisk="true"
-           timeToIdleSeconds="180"
-           timeToLiveSeconds="180"
+           timeToIdleSeconds="180000"
+           timeToLiveSeconds="260000"
            diskExpiryThreadIntervalSeconds="3600"/>
 
     <cache name="test_cache"

@@ -33,6 +33,7 @@ public class StudentRealm extends AuthorizingRealm {
         Set<String> permissions = StudentDao.getPermissions(username) ;
         info.setRoles(roleName);
         info.setStringPermissions(permissions);
+        System.out.println("访问数据库权限");
         return info;
 
     }
@@ -42,7 +43,7 @@ public class StudentRealm extends AuthorizingRealm {
         String username =  token.getPrincipal().toString();
         Student student = StudentDao.search(username);
         if (student != null){
-            //将查询到的用户账号和密码存放到 authenticationInfo用于后面的权限判断。第三个参数随便放一个就行了。
+            //将查询到的用户账号和密码存放到 authenticationInfo用于后面的权限判断。第三个参数是Ream名。
             AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(student.getUsername(),student.getPassword(),
                     this.getName()) ;
             return authenticationInfo ;

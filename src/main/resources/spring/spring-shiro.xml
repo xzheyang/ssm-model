@@ -9,15 +9,17 @@
 
     <!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="cacheManager" ref="cacheManager" />
          <!--session的失效时长，单位毫秒-->
-        <property name="globalSessionTimeout" value="50000"/>
+        <property name="globalSessionTimeout" value="#{1000*60*60*24*30}"/>
          <!--删除失效的session-->
         <property name="deleteInvalidSessions" value="true"/>
+        <!--<property name="sessionValidationScheduler" value="" />-->
         <property name="sessionListeners" ref="SessionListener" />
         <property name="sessionDAO" ref="SessionDao" />
     </bean>
 
-    <!-- 缓存管理器 -->
+<!-- 缓存管理器 -->
     <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
         <property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"/>
 
@@ -26,7 +28,7 @@
     <!-- SessionDao -->
     <bean name="SessionDao" class="shiro.session.SessionDao">
         <property name="activeSessionsCacheName" value="activeSessionCache"/>
-        <property name="cacheManager" ref="cacheManager"></property>
+       <property name="cacheManager" ref="cacheManager" /> <!--这里的cacheManager是shiro用着有问题 -->
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>
     <!-- 会话ID生成器  -->
@@ -34,32 +36,31 @@
 
     <bean name="SessionListener" class="shiro.session.SessionListener"></bean>
 
-    <!-- rememberMeCookie
-    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
-        <constructor-arg value="rememberMe"/>
-    <property name="httpOnly" value="true"/>
-    <property name="maxAge" value="2592000"/>
-    </bean>-->
+    <!--rememberMeCookie-->
+   <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+       <constructor-arg value="rememberMe"/>
+   <property name="httpOnly" value="true"/>
+   <property name="maxAge" value="2592000"/>
+   </bean>
 
-    <!-- rememberMe管理器  注意:这是使用AES算法生成cookie,所以安全性要求高的网站不推荐使用
-    <bean id="rememberMeManager"
-          class="org.apache.shiro.web.mgt.CookieRememberMeManager">
-        <property name="cipherKey" value="
-    #{T(org.apache.shiro.codec.Base64).decode('wGiHplamyXlVB11UXWol8g==')}"/>
-        <property name="cookie" ref="rememberMeCookie"/>
-    </bean>-->
+    <!-- rememberMe管理器  注意:这是使用AES算法生成cookie, 安全性要求高的网站不推荐使用-->
+   <bean id="rememberMeManager"
+         class="org.apache.shiro.web.mgt.CookieRememberMeManager">
 
-    <!--自定义form认证过滤器
-    <bean id="formAuthenticationFilter"
-          class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+       <!-- 之前一直用不起的原因是因为加了回车 -->
+       <property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('wGiHplamyXlVB11UXWol8g==')}"/>
+       <property name="cookie" ref="rememberMeCookie"/>
+   </bean>
 
-        <property name="usernameParam" value="username" />
+    <!-- 自定义form认证过滤器-->
+   <bean id="formAuthenticationFilter"
+         class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+       <property name="usernameParam" value="username" />
+       <property name="passwordParam" value="password" />
+       <property name="rememberMeParam" value="rememberMe"/>
+       <property name="loginUrl" value="/loginUser" />
+   </bean>
 
-        <property name="passwordParam" value="password" />
-
-        <property name="rememberMeParam" value="rememberMe"/>
-
-    </bean>-->
 
 
 
@@ -81,8 +82,8 @@
         <property name="realm" ref="StudentRealm"/>
         <!-- 注入会话管理器 -->
         <property name="sessionManager" ref="sessionManager" />
-        <!-- 注入rememberMe
-        <property name="rememberMeManager" ref="rememberMeManager" />-->
+        <!-- 注入rememberMe-->
+        <property name="rememberMeManager" ref="rememberMeManager" />
     </bean>
 
     <!-- Shiro过滤器 核心-->
@@ -90,25 +91,29 @@
         <!-- Shiro的核心安全接口,这个属性是必须的 -->
         <property name="securityManager" ref="securityManager"/>
         <!-- 身份认证失败，则跳转到登录页面的配置 -->
-        <property name="loginUrl" value="/login_user.jsp"/>
+        <property name="loginUrl" value="/loginUser"/>
         <!-- 权限认证失败，则跳转到指定页面 -->
         <property name="unauthorizedUrl" value="/no_permission.jsp"/>
-        <!-- filter链
+         <!-- filter链 -->
         <property name="filters">
             <map>
                 <entry key="authc" value-ref="formAuthenticationFilter"/>
             </map>
-        </property>-->
+        </property>
 
         <!-- Shiro连接约束配置,即过滤链的定义 -->
         <property name="filterChainDefinitions">
             <value>
                 <!--anon 表示匿名访问，不需要认证以及授权-->
-                /loginUser=anon
+                /login_user.jsp=anon
                 <!--authc表示需要认证 没有进行身份认证是不能进行访问的-->
+
+                /loginUser = authc
+                <!-- 权限 -->
                 /super=user
-                /student=roles[student]
-                /teacher=perms["user:create"]
+                /student=authc,roles[student]
+                /teacher=authc,perms["user:create"]
+
                 <!--清除session,退出登录-->
                 /logout=logout
             </value>
