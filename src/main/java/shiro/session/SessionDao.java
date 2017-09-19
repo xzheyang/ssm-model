@@ -8,21 +8,26 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import shiro.utils.SerializableUtils;
+
+import javax.annotation.Resource;
 import java.io.Serializable;
 
 
-@Repository()
+@Repository
 public class SessionDao extends CachingSessionDAO {
 
     private Cache cache = null;
+    //@Resource(name="cacheManager")       不同Manager的储存值不一样
+    //EhCacheManager Manager;
 
 
     @Override
     public void setCacheManager(CacheManager cacheManager) {
         super.setCacheManager(cacheManager);
-        cache = cacheManager.getCache("activeSessionCache");    //这不是session存放的地方?
+        cache = cacheManager.getCache("activeSessionCache");
     }
 
     protected void doUpdate(Session session) {
@@ -41,8 +46,8 @@ public class SessionDao extends CachingSessionDAO {
 
     protected void doDelete(Session session) {
 
-        cache.remove(session.getId());
-
+        cache.remove(session.getId());  //这里是持久层,原本是删除数据库里面的,而且sessionManager会自己删除缓存的
+        System.out.println("删除"+session.getId());
 
     }
 
@@ -56,7 +61,7 @@ public class SessionDao extends CachingSessionDAO {
         assignSessionId(session,sessionId);
         //将数据序列化后  添加到缓存
         //cache.put(sessionId,SerializableUtils.serialize(session));
-        System.out.println("创建");
+        System.out.println("创建"+session.getId());
 
 
         return sessionId;
@@ -78,10 +83,9 @@ public class SessionDao extends CachingSessionDAO {
     }
 
     public void deleteByUserName(String userName){
+        //不同SessionDao用的不同SessionManager,这样,这方法是失败的,待解决
 
-
-        EhCacheManager manager = new EhCacheManager();
-        Cache cache = manager.getCache("activeSessionCache");
+        //Cache cache = Manager.getCache("activeSessionCache");
 
 
         System.out.println("why = " + cache.keys());

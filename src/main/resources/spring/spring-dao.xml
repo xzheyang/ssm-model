@@ -10,9 +10,9 @@
 ">
 
     <!--扫描bean -->
-<context:component-scan base-package="service,controller,dao,shiro" ></context:component-scan>
+<context:component-scan base-package="service,controller,dao,shiro" />
     <!-- 加载properties -->
-<context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+<context:property-placeholder location="classpath:jdbc.properties,redis.properties" />
 
     <!-- 数据库连接参数配置 -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -54,6 +54,42 @@
     </bean>
 
 
+    <!--
+   *********************************redis配置*******************************************
+   -->
+                    <!-- jedis 配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig" >
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxWaitMillis" value="${redis.maxWait}" />
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean >
+    <!-- redis服务器中心 -->
+    <bean id="connectionFactory"  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" >
+        <property name="poolConfig" ref="poolConfig" />
+        <property name="port" value="${redis.port}" />
+        <property name="hostName" value="${redis.host}" />
+        <property name="password" value="${redis.password}" />
+        <property name="timeout" value="${redis.timeout}" ></property>
+    </bean >
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="keySerializer" >
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
+        </property>
+        <property name="valueSerializer" >
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
+        </property>
+    </bean >
+
+    <!-- cache配置 -->
+    <bean id="methodCacheInterceptor" class="redis.MethodCacheInterceptor" >
+        <property name="redisUtil" ref="redisUtil" />
+    </bean >
+    <bean id="redisUtil" class="redis.RedisUtil" >
+        <property name="redisTemplate" ref="redisTemplate" />
+    </bean >
+
+    <!-- 可以使用spring的AOP(切面拦截)来实现使用Redis -->
 
 
 </beans>

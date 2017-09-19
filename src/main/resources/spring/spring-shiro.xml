@@ -27,8 +27,8 @@
 
     <!-- SessionDao -->
     <bean name="SessionDao" class="shiro.session.SessionDao">
-        <property name="activeSessionsCacheName" value="activeSessionCache"/>
-       <property name="cacheManager" ref="cacheManager" /> <!--这里的cacheManager是shiro用着有问题 -->
+        <property name="activeSessionsCacheName" value="activeSessionCache"/><!--设置Session缓存名字，默认是shiro-activeSessionCache-->
+        <!--<property name="cacheManager" ref="cacheManager" /> 这里不需要设置,SessionManager会传递过来 -->
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>
     <!-- 会话ID生成器  -->
