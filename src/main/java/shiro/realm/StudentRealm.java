@@ -41,7 +41,7 @@ public class StudentRealm extends AuthorizingRealm {
     //密码验证
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         String username =  token.getPrincipal().toString();
-        Student student = StudentDao.search(username);
+        Student student = StudentDao.selectStudentByUsername(username);
         if (student != null){
             //将查询到的用户账号和密码存放到 authenticationInfo用于后面的权限判断。第三个参数是Ream名。
             AuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(student.getUsername(),student.getPassword(),

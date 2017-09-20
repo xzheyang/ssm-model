@@ -5,7 +5,12 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd
 
 ">
-    <!--配置,出现问题,不能注册shiro相关bean -->
+
+    <!--
+
+    *********************默认的SessionManager()******************************
+
+    -->
 
     <!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
@@ -16,18 +21,17 @@
         <property name="deleteInvalidSessions" value="true"/>
         <!--<property name="sessionValidationScheduler" value="" />-->
         <property name="sessionListeners" ref="SessionListener" />
-        <property name="sessionDAO" ref="SessionDao" />
+        <property name="sessionDAO" ref="RedisSessionDao" />
     </bean>
 
-<!-- 缓存管理器 -->
+    <!-- EH缓存管理器 -->
     <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
         <property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml"/>
 
     </bean>
 
-    <!-- SessionDao -->
-    <bean name="SessionDao" class="shiro.session.SessionDao">
-        <property name="activeSessionsCacheName" value="activeSessionCache"/><!--设置Session缓存名字，默认是shiro-activeSessionCache-->
+    <!-- 默认SessionDao -->
+    <bean name="RedisSessionDao" class="shiro.session.RedisSessionDao">
         <!--<property name="cacheManager" ref="cacheManager" /> 这里不需要设置,SessionManager会传递过来 -->
         <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
     </bean>

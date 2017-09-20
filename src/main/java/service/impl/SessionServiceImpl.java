@@ -4,7 +4,7 @@ import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.springframework.stereotype.Component;
 import service.SessionService;
-import shiro.session.SessionDao;
+import shiro.session.RedisSessionDao;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpSession;
 public class SessionServiceImpl implements SessionService {
 
     @Resource
-    private SessionDao sessionDao;
+    private RedisSessionDao redisSessionDao;
 
     public boolean deleteMySessions(HttpSession session) {
 
@@ -27,7 +27,7 @@ public class SessionServiceImpl implements SessionService {
         }
         if(obj!=null){
             String userName = (String) obj;
-            sessionDao.deleteByUserName(userName);
+            redisSessionDao.deleteByUserName(userName);
         }
 
 

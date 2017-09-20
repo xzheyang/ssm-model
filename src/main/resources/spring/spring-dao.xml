@@ -2,17 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
 ">
 
     <!--扫描bean -->
 <context:component-scan base-package="service,controller,dao,shiro" />
     <!-- 加载properties -->
-<context:property-placeholder location="classpath:jdbc.properties,redis.properties" />
+<context:property-placeholder location="classpath:jdbc.properties,classpath:redis.properties" />
 
     <!-- 数据库连接参数配置 -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -50,7 +53,7 @@
         <!-- 注入sqlSessionFactory -->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
         <!-- 给出需要扫描Dao接口包 -->
-        <property name="basePackage" value="dao"></property>
+        <property name="basePackage" value="dao" />
     </bean>
 
 
@@ -59,6 +62,7 @@
    -->
                     <!-- jedis 配置 -->
     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig" >
+        <property name="maxTotal" value="${redis.maxActive}"/>
         <property name="maxIdle" value="${redis.maxIdle}" />
         <property name="maxWaitMillis" value="${redis.maxWait}" />
         <property name="testOnBorrow" value="${redis.testOnBorrow}" />
@@ -73,10 +77,10 @@
     </bean >
     <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate" >
         <property name="connectionFactory" ref="connectionFactory" />
-        <property name="keySerializer" >
+        <property name="keySerializer" >        <!-- key序列化 -->
             <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />
         </property>
-        <property name="valueSerializer" >
+        <property name="valueSerializer" >      <!-- value序列化 -->
             <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer" />
         </property>
     </bean >
@@ -91,5 +95,13 @@
 
     <!-- 可以使用spring的AOP(切面拦截)来实现使用Redis -->
 
+    <!--配置切面拦截方法 -->
+    <aop:config proxy-target-class="true">
+        <!--将service包下的所有select开头的方法加入拦截
+        -->
+        <aop:pointcut id="controllerMethodPointcut" expression="execution(* service.*.select*(..))"/>
+        <aop:pointcut id="selectMethodPointcut" expression="execution(* dao..*Dao.select*(..))"/>
+        <aop:advisor advice-ref="methodCacheInterceptor" pointcut-ref="controllerMethodPointcut"/>
+    </aop:config>
 
 </beans>

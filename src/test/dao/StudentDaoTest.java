@@ -14,7 +14,7 @@ public class StudentDaoTest extends BaseTest {
     public void testStudentDao(){
 
 
-        Student s = StudentDao.search("hy");
+        Student s = StudentDao.selectStudentByUsername("hy");
 
         System.out.println("username:"+s.getUsername());
         System.out.println("password:"+s.getPassword());

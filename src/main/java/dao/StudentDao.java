@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Repository
 public interface StudentDao {
-        Student search(String username);
+        Student selectStudentByUsername(String username);
         Set<String> getRoles(String username);
         Set<String> getPermissions(String username);
 }

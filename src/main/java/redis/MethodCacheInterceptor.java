@@ -15,15 +15,15 @@ public class MethodCacheInterceptor implements MethodInterceptor {
     private List<String> targetNamesList; // 不加入缓存的service名称
     private List<String> methodNamesList; // 不加入缓存的方法名称
     private Long defaultCacheExpireTime; // 缓存默认的过期时间
-    private Long xxxRecordManagerTime; //
-    private Long xxxSetRecordManagerTime; //
+    private Long xxxRecordManagerTime; //       未创建RecordManager
+    private Long xxxSetRecordManagerTime; //    未创建SetRecordManager
 
     /**
      * 初始化读取不需要加入缓存的类名和方法名称
      */
     public MethodCacheInterceptor() {
         try {
-            // 分割字符串 这里没有加入任何方法
+            // 分割字符串 这里添加不需要缓存的service的method
             String[] targetNames = {};
             String[] methodNames = {};
 
@@ -68,6 +68,7 @@ public class MethodCacheInterceptor implements MethodInterceptor {
         try {
             // 判断是否有缓存
             if (redisUtil.exists(key)) {
+                System.out.println("已有缓存,无需调用数据库");
                 return redisUtil.get(key);
             }
             // 写入缓存
@@ -78,7 +79,7 @@ public class MethodCacheInterceptor implements MethodInterceptor {
                 new Thread(new Runnable() {
 
                     public void run() {
-                        if (tkey.startsWith("com.service.impl.xxxRecordManager")) {
+                        if (tkey.startsWith("com.service.impl.xxxRecordManager")) { //检测字符串是否以""开始
                             redisUtil.set(tkey, tvalue, xxxRecordManagerTime);
                         } else if (tkey.startsWith("com.service.impl.xxxSetRecordManager")) {
                             redisUtil.set(tkey, tvalue, xxxSetRecordManagerTime);

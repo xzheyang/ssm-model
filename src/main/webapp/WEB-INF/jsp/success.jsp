@@ -11,6 +11,7 @@
     <title>success</title>
 </head>
 <body>
-<h2>success</h2>
+<h2>success</h2><br>
+name: ${result.username}    password:   ${result.password}
 </body>
 </html>

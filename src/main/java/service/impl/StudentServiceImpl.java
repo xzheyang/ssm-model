@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 public class StudentServiceImpl implements StudentService {
 
     @Resource
-    private StudentDao StudentDao;
+    private StudentDao studentDao;
 
     public boolean loginUser(Student student) {
 
@@ -31,6 +31,11 @@ public class StudentServiceImpl implements StudentService {
            return false;
        }
             return true;
+    }
+
+    public Student selectStudentTest(){
+
+        return studentDao.selectStudentByUsername("test");
     }
 
     /*原始

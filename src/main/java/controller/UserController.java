@@ -5,6 +5,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,7 +43,7 @@ public class UserController {
         }
 
 
-        return "success";
+        return "super";
 
 
     }
@@ -71,6 +72,14 @@ public class UserController {
     public String test3(){
 
         return "teacher";
+    }
+
+    @RequestMapping(value = "/testRedis")
+    public String test4(Model model){
+        Student student = service.selectStudentTest();
+        model.addAttribute("result",student);
+        System.out.println("result = [" + student.getPassword() + "]");
+        return "success";
     }
 
 
