@@ -102,6 +102,7 @@
         <property name="filters">
             <map>
                 <entry key="authc" value-ref="formAuthenticationFilter"/>
+                <entry key="ForceLogOut" value-ref="ForceLogOutFilter"/>
             </map>
         </property>
 
@@ -114,26 +115,21 @@
 
                 /loginUser = authc
                 <!-- 权限 -->
-                /super=user
-                /student=authc,roles[student]
-                /teacher=authc,perms["user:create"]
+                /super=user,ForceLogOut
+                /student=authc,roles[student],ForceLogOut
+                /teacher=authc,perms["user:create"],ForceLogOut
 
                 <!--清除session,退出登录-->
                 /logout=logout
+
+                /**=ForceLogOut
             </value>
         </property>
 
-
-    </bean>
-    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
-    <!-- 开启Shiro注解 -->
-    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
-          depends-on="lifecycleBeanPostProcessor"/>
-    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
-        <property name="securityManager" ref="securityManager"/>
     </bean>
 
+
+    <bean name="ForceLogOutFilter" class="shiro.filter.ForceLogOutFilter"></bean>
 
 
 </beans>

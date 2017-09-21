@@ -2,16 +2,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
 
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd
-
+        http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
 ">
 
     <!-- 开启springmvc驱动 -->
-<mvc:annotation-driven></mvc:annotation-driven>
+    <mvc:annotation-driven></mvc:annotation-driven>
+
+    <!-- 扫描controller -->
+    <context:component-scan base-package="controller"/>
 
 
     <!-- 视图解析器 -->
@@ -20,5 +25,30 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <!--           shiro的配置这里需要放到spring-mvc.xml中                             -->
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!-- 开启Shiro注解 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+
+
+    <!-- shiro没有权限是直接抛出异常,所以需要拦截 -->
+    <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="org.apache.shiro.authz.UnauthorizedException">
+                    redirect:no_permission.jsp
+                </prop>
+                <prop key="org.apache.shiro.authz.UnauthenticatedException">
+                    redirect:login_user.jsp
+                </prop>
+            </props>
+        </property>
+    </bean>
 
 </beans>

@@ -19,6 +19,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import static pojo.SessionItem.SESSION_STATUS;
+
 
 @Repository
 public class RedisSessionDao extends AbstractSessionDAO {
@@ -76,6 +78,8 @@ public class RedisSessionDao extends AbstractSessionDAO {
     public void update(Session session) throws UnknownSessionException {
         logger.debug("更新seesion,id=[{}]", session.getId().toString());
 
+        if(session.getAttribute(SESSION_STATUS)!=null){
+            System.out.println("用户update中被踢出");}
         if (session instanceof ValidatingSession
                 && !((ValidatingSession) session).isValid()) {
             return; // 如果会话过期/停止 没必要再更新了
@@ -136,6 +140,12 @@ public class RedisSessionDao extends AbstractSessionDAO {
                 }
             }
         }catch (Exception e){ logger.error(e.getMessage(),e);}
+
+    }
+
+    public Session getSession(String sessionId){
+
+        return doReadSession(sessionId);
 
     }
 

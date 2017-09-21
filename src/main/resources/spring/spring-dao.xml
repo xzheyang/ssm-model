@@ -13,7 +13,7 @@
 ">
 
     <!--扫描bean -->
-<context:component-scan base-package="service,controller,dao,shiro" />
+<context:component-scan base-package="service,dao,shiro" />
     <!-- 加载properties -->
 <context:property-placeholder location="classpath:jdbc.properties,classpath:redis.properties" />
 
